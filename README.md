@@ -42,27 +42,16 @@ Before you begin, ensure you have the following installed on your system:
    cd real-time-chat-api
 
 Install the dependencies:
-
-bash
-Copy code
 npm install
 Create a .env file in the root directory and add the following:
 
-bash
-Copy code
 PORT=3000
 MONGO_URI=mongodb://localhost:27017/realtimechat
 JWT_SECRET=your_jwt_secret_key
 
 Start the server:
-
-bash
-Copy code
 npm start
 Testing the API locally: You can test the API by sending HTTP requests using tools like Postman or Insomnia. By default, the API will be running at:
-
-bash
-Copy code
 http://localhost:3000
 
 API Endpoints
@@ -79,15 +68,11 @@ Usage
 Sending HTTP Requests
 You can interact with the API using tools like Postman or curl. For example, to register a new user:
 
-bash
-Copy code
 curl -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
   -d '{"username": "JohnDoe", "password": "password123"}'
 Once you have a valid JWT, include it in the Authorization header to interact with protected endpoints, like sending a message:
 
-bash
-Copy code
 curl -X POST http://localhost:3000/messages \
   -H "Authorization: Bearer <your_token>" \
   -H "Content-Type: application/json" \
@@ -96,7 +81,6 @@ WebSocket Connection
 To test real-time chat functionality, connect to the WebSocket using Socket.IO-client:
 
 javascript
-Copy code
 const socket = io('http://localhost:3000');
 socket.emit('chatMessage', { username: 'JohnDoe', message: 'Hello, World!' });
 Manual Testing
@@ -107,8 +91,6 @@ Use the JWT token to send messages and get responses in real time using WebSocke
 Running Tests
 To run the unit and integration tests, you can use the following command:
 
-bash
-Copy code
 npm test
 Make sure you have Mocha, Chai, and Supertest installed for your testing environment.
 
@@ -125,7 +107,6 @@ Bravin Masinde (Team member)
 Feel free to fork this project, contribute, or reach out if you have any questions!
 
 markdown
-Copy code
 
 ### Explanation of the Structure:
 - **Project Description**: A brief description of what the project is about and its core functionality.

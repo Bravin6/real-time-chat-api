@@ -1,4 +1,3 @@
-// Importing modules
 require('dotenv').config();
 const express = require('express');
 const http = require('http');
@@ -6,29 +5,19 @@ const socketIO = require('socket.io');
 const connectDB = require('./config/db'); // Import DB connection
 const chatRoutes = require('./routes/chatRoutes'); // Import chat routes
 const userRoutes = require('./routes/userRoutes'); // Import user routes
-const { addUser, removeUser, sendMessage } = require('./services/websocketService'); // WebSocket service
-const dotenv = require('dotenv');
-const websocketService = require('./services/websocketService');
+const Message = require('./models/Message'); // Message model
+const { addUser, removeUser, getUser } = require('./services/websocketService'); // WebSocket service
 
-// Load environment variables
-dotenv.config();
-
-// Initialize app and server
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-// Connect to the database
 connectDB();
 
-// Middleware
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 
-// API routes
-app.use('/api/chat', chatRoutes); // Chat API routes
-app.use('/api/users', userRoutes); // User API routes
-
-// WebSocket logic
+app.use('/api/chat', chatRoutes);
+app.use('/api/users', userRoom);
 io.on('connection', (socket) => {
   console.log('A user connected');
 
@@ -37,8 +26,24 @@ io.on('connection', (socket) => {
     console.log(`User ${userId} joined`);
   });
 
-  socket.on('chatMessage', (msg) => {
-    sendMessage(io, msg.userId, msg.message);
+  
+  socket.on('chatMessage', async (msg) => {
+    const { userId, roomId, message } = msg;
+
+  
+    try {
+      const newMessage = new Message({
+        userId,
+        roomId,
+        message,
+      });
+      await newMessage.save();
+
+ 
+      io.emit('message', { userId, roomId, message });
+    } catch (error) {
+      console.error('Error saving message:', error.message);
+    }
   });
 
   socket.on('disconnect', () => {
@@ -47,7 +52,6 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start the server
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
